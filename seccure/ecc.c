@@ -125,7 +125,8 @@ int point_decompress(struct affine_point *p, const gcry_mpi_t x, int yflag,
       else
 	gcry_mpi_sub(p->y, dp->m, y);
     rc = point_on_curve(p, dp);
-    assert(rc);
+    if (!rc)
+        abort();
     }
   gcry_mpi_release(h);
   gcry_mpi_release(y);
@@ -370,7 +371,8 @@ struct affine_point pointmul(const struct affine_point *p,
   R = jacobian_to_affine(&r, dp);
   jacobian_release(&r);
   rc = point_on_curve(&R, dp);
-  assert(rc);
+  if (!rc)
+    abort();
   return R;
 }
 

@@ -84,14 +84,16 @@ void aes256ctr_enc(struct aes256ctr *ac, char *buf, int len)
 
   full_blocks = (len / CIPHER_BLOCK_SIZE) * CIPHER_BLOCK_SIZE;
   err = gcry_cipher_encrypt(ac->ch, buf, full_blocks, NULL, 0);
-  assert(! gcry_err_code(err));
+  if (gcry_err_code(err))
+    abort();
   len -= full_blocks;
   buf += full_blocks;
 
   if (len) {
     memset(ac->buf, 0, CIPHER_BLOCK_SIZE);
     err = gcry_cipher_encrypt(ac->ch, ac->buf, CIPHER_BLOCK_SIZE, NULL, 0);
-    assert(! gcry_err_code(err));
+    if (gcry_err_code(err))
+      abort();
     ac->idx = 0;
     
     for(; len && (ac->idx < CIPHER_BLOCK_SIZE); len--)
